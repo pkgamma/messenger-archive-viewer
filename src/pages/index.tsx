@@ -30,66 +30,15 @@ import OnboardingCarousel from '@/components/OnboardingCarousel';
 import SearchInput from '@/components/SearchInput';
 
 function StartScreen({ openDirPicker }: { openDirPicker: () => void }) {
-  const contents = [
-    <div
-      key='step-1'
-      className='flex w-full flex-col items-center justify-center'
-    >
-      <img src='/ios/100.png' alt='logo' width={100} height={100} />
-      <h1 className='text-center text-2xl font-bold'>
-        Welcome to Facebook Messenger exported JSON viewer
-      </h1>
-      <p className='mt-5'>Click next to continue</p>
-    </div>,
-    <div
-      key='step-2'
-      className='flex w-full flex-col items-center justify-center'
-    >
-      <img
-        src='/images/step1.png'
-        className='mb-5 w-full max-w-5xl'
-        alt='step-1'
-      />
-      <h2 className='text-center text-xl font-bold'>
-        Step 1: Export the messenger data as JSON from Facebook. Go to{' '}
-        <a
-          href='https://www.facebook.com/dyi'
-          target='_blank'
-          rel='noreferrer'
-          className='underline'
-        >
-          Download Your Information
-        </a>{' '}
-        page.
-      </h2>
-    </div>,
-    <div
-      key='step-3'
-      className='flex w-full flex-col items-center justify-center'
-    >
-      <img
-        src='/images/step2.png'
-        className='mb-5 w-full max-w-5xl'
-        alt='step-2'
-      />
-      <h2 className='text-center text-xl font-bold'>
-        Step 2: Make sure your folder looks like this.
-      </h2>
-    </div>,
-    <div key='step-3'>
+  return (
+    <div className='flex h-full flex-col items-center justify-center overflow-hidden'>
       <button
         className='rounded px-4 py-2 ring-1 hover:bg-blue-500 hover:text-white'
         onClick={openDirPicker}
       >
         Open Folder
       </button>
-    </div>,
-  ];
-
-  return (
-    <OnboardingCarousel className='flex h-full flex-col items-center justify-center overflow-hidden'>
-      {contents}
-    </OnboardingCarousel>
+    </div>
   );
 }
 

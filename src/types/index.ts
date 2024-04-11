@@ -49,6 +49,7 @@ export type Message = (
     reaction: string;
     actor: string;
   }[];
+  is_geoblocked_for_viewer: boolean;
 };
 
 export type MessageData = {

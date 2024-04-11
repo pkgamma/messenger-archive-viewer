@@ -246,6 +246,7 @@ export default function MessageComponent({
       }
     }
     default:
-      return renderNotImplemented();
+      // return renderNotImplemented();
+      return renderDefault();
   }
 }
