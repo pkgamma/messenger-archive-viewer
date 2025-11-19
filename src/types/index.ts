@@ -38,6 +38,7 @@ export type Message = (
       }[];
       sticker?: {
         uri: string;
+        ai_stickers?: any[];
       };
     }
 ) & {

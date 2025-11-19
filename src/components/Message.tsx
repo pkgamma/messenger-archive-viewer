@@ -139,14 +139,22 @@ export default function MessageComponent({
 
       const images = await Promise.all(
         message.photos.map(async (photo) => {
-          const uri = photo.uri.replace(/^messages\//, '');
-          const fileHandle = await getFileHandleRecursively(rootDir, uri);
-          if (!fileHandle) {
+          const uri = photo.uri.replace(
+            /^(your_facebook_activity\/)?messages\//,
+            ''
+          );
+          try {
+            const fileHandle = await getFileHandleRecursively(rootDir, uri);
+            if (!fileHandle) {
+              return null;
+            }
+            const file = await fileHandle.getFile();
+            const url = URL.createObjectURL(file);
+            return url;
+          } catch (e) {
+            console.error('Failed to load photo:', uri, e);
             return null;
           }
-          const file = await fileHandle.getFile();
-          const url = URL.createObjectURL(file);
-          return url;
         })
       );
 
@@ -180,44 +188,53 @@ export default function MessageComponent({
     </BaseMessage>
   );
 
+  // Handle messages with sticker (even if type is missing)
+  if ('sticker' in message && message.sticker) {
+    return (
+      <BaseMessage
+        isFirst={isFirst}
+        isLast={isLast}
+        isMe={isMe}
+        message={message}
+        transparentBG
+      >
+        <FsImage
+          root={rootDir}
+          path={message.sticker.uri.replace(
+            /^(your_facebook_activity\/)?messages\//,
+            ''
+          )}
+        />
+      </BaseMessage>
+    );
+  }
+
+  // Handle messages with photos (even if type is missing)
+  if ('photos' in message && message.photos) {
+    return (
+      <SRLWrapper>
+        <BaseMessage
+          isFirst={isFirst}
+          isLast={isLast}
+          isMe={isMe}
+          message={message}
+        >
+          {imageURIs
+            ? imageURIs.map((uri) => (
+                <a href={uri} key={uri}>
+                  <img src={uri} alt={uri} />
+                </a>
+              ))
+            : content}
+        </BaseMessage>
+      </SRLWrapper>
+    );
+  }
+
   switch (message.type) {
     case MessageType.Generic: {
-      if (message.photos) {
-        return (
-          <SRLWrapper>
-            <BaseMessage
-              isFirst={isFirst}
-              isLast={isLast}
-              isMe={isMe}
-              message={message}
-            >
-              {imageURIs
-                ? imageURIs.map((uri) => (
-                    <a href={uri} key={uri}>
-                      <img src={uri} alt={uri} />
-                    </a>
-                  ))
-                : content}
-            </BaseMessage>
-          </SRLWrapper>
-        );
-      } else if (message.content) {
+      if (message.content) {
         return renderDefault();
-      } else if (message.sticker) {
-        return (
-          <BaseMessage
-            isFirst={isFirst}
-            isLast={isLast}
-            isMe={isMe}
-            message={message}
-            transparentBG
-          >
-            <FsImage
-              root={rootDir}
-              path={message.sticker.uri.replace(/^messages\//, '')}
-            />
-          </BaseMessage>
-        );
       } else {
         return renderDefault();
       }
@@ -246,7 +263,6 @@ export default function MessageComponent({
       }
     }
     default:
-      // return renderNotImplemented();
       return renderDefault();
   }
 }
